@@ -22,12 +22,14 @@ export const SecondCategoryComponent = ({ attributes }) => {
         </a>
       </div>
       <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-[16px] mt-[16px]">
-        {attributes?.bots?.data?.map((data, idx) => (
-          <BotComponent
-            key={data?.id}
-            attributes={{ ...data?.attributes, id: data?.id }}
-          />
-        ))}
+        {attributes?.bots?.data
+          ?.filter((data) => data?.attributes?.published)
+          ?.map((data, idx) => (
+            <BotComponent
+              key={data?.id}
+              attributes={{ ...data?.attributes, id: data?.id }}
+            />
+          ))}
       </div>
     </div>
   );

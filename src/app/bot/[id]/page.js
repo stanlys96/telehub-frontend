@@ -31,6 +31,8 @@ export default function Bot() {
     `/api/user-accounts?filters[email][$eq]=${session?.data?.user?.email}`,
     fetcherStrapi
   );
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const userResult = userData?.data?.data?.[0];
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -39,7 +41,27 @@ export default function Bot() {
     setIsModalOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
+    if (!description) return;
+    setLoading(true);
+    try {
+      await axiosApi.post("/api/reports", {
+        data: {
+          description: description,
+          user_account: userResult?.id,
+          bot: botResult?.id,
+        },
+      });
+      Toast.fire({
+        icon: "success",
+        title:
+          "Successfully submitted the report! Thank you for your feedback!",
+      });
+      setDescription("");
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+    }
     setIsModalOpen(false);
   };
 
@@ -252,6 +274,7 @@ export default function Bot() {
         onOk={handleOk}
         onCancel={handleCancel}
         footer={null}
+        loading={loading}
       >
         <p className="mt-[25px] text-center text-[24px] font-bold">
           Report Bot
@@ -265,9 +288,11 @@ export default function Bot() {
           Tell us more about the problem
         </p>
         <TextArea
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
           rows={6}
           placeholder="Please be clear and concise about the reasoning"
-          maxLength={10}
+          maxLength={250}
         />
         <a
           onClick={handleOk}

@@ -1,18 +1,38 @@
 "use client";
 import { MainLayout } from "@/layouts/MainLayout";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Select, Modal, Input } from "antd";
 import useSWR from "swr";
-import { fetcherStrapi } from "@/utils/axios";
+import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
+import { useSession } from "next-auth/react";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.close;
+  },
+});
 
 const { TextArea } = Input;
 
 export default function Bot() {
   const pathname = usePathname();
+  const session = useSession();
   const queryId = pathname?.split("/")?.[2];
+  const { data: userData } = useSWR(
+    `/api/user-accounts?filters[email][$eq]=${session?.data?.user?.email}`,
+    fetcherStrapi
+  );
+
+  const userResult = userData?.data?.data?.[0];
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -26,14 +46,29 @@ export default function Bot() {
   const handleCancel = () => {
     setIsModalOpen(false);
   };
-  const [hover, setHover] = useState(0);
-  const [rating, setRating] = useState(0);
+
   const { data: botData } = useSWR(
     `/api/bots/${queryId}?populate=*`,
     fetcherStrapi
   );
   const botResult = botData?.data?.data;
+  const imageUrl = botResult?.attributes?.image?.data?.attributes?.url
+    ? process.env.NEXT_PUBLIC_AXIOS_API +
+      botResult?.attributes?.image?.data?.attributes?.url
+    : "/img/example.png";
+  const { data: ratingData } = useSWR(
+    `/api/ratings?filters[user_account][$eq]=${userResult?.id}&filters[bot][$eq]=${botResult?.id}`,
+    fetcherStrapi
+  );
 
+  const ratingResult = ratingData?.data?.data?.[0];
+
+  const [hover, setHover] = useState(0);
+  const [rating, setRating] = useState(ratingResult?.attributes?.rating ?? 0);
+
+  useEffect(() => {
+    setRating(ratingResult?.attributes?.rating ?? 0);
+  }, [ratingResult?.attributes?.rating]);
   return (
     <MainLayout>
       <div className="px-[16px] md:px-[100px] py-[50px]">
@@ -43,32 +78,11 @@ export default function Bot() {
         <div className="grid md:grid-cols-3 gap-5 mt-5">
           <div className="flex flex-col md:gap-5 col-span-2">
             <div className="md:hidden flex justify-center items-center bg-[#9EE7FF] rounded-t-[16px] py-3">
-              {botResult?.attributes?.image?.data?.attributes?.url && (
-                <Image
-                  width={100}
-                  height={100}
-                  alt="img"
-                  src={
-                    process.env.NEXT_PUBLIC_AXIOS_API +
-                      botResult?.attributes?.image?.data?.attributes?.url ?? ""
-                  }
-                />
-              )}
+              <Image width={100} height={100} alt="img" src={imageUrl} />
             </div>
             <div className="rounded-b-[12px] md:rounded-[12px] bg-white p-[12px] md:p-[24px] flex gap-x-4">
               <div className="hidden md:block">
-                {botResult?.attributes?.image?.data?.attributes?.url && (
-                  <Image
-                    src={
-                      process.env.NEXT_PUBLIC_AXIOS_API +
-                        botResult?.attributes?.image?.data?.attributes?.url ??
-                      ""
-                    }
-                    width={180}
-                    height={180}
-                    alt="example"
-                  />
-                )}
+                <Image src={imageUrl} width={180} height={180} alt="example" />
               </div>
               <div className="w-full">
                 <div className="flex justify-between items-center w-full">
@@ -97,12 +111,24 @@ export default function Bot() {
                 </div>
                 <div className="my-3">
                   <p className="text-[16px] md:text-[24px]">
-                    {botResult?.attributes?.chain?.data?.attributes?.name}{" "}
-                    Chain, {botResult?.attributes?.members} Members
+                    {botResult?.attributes?.chain?.data?.attributes?.name ??
+                      "TON"}{" "}
+                    Chain, {botResult?.attributes?.members ?? "0"} Members
                   </p>
                 </div>
-                <a className="cursor-pointer w-full block px-[19px] py-[8px] rounded-[39px] text-[#28B9E8] font-bold text-center border border-[#28B9E8]">
-                  + Add bot
+                <a
+                  onClick={() => {
+                    window.open(
+                      `https://t.me/${botResult?.attributes?.username?.replaceAll(
+                        "@",
+                        ""
+                      )}`,
+                      "_blank"
+                    );
+                  }}
+                  className="hover:bg-[#28B9E8] hover:text-white transition duration-300 cursor-pointer w-full block px-[19px] py-[8px] rounded-[39px] text-[#28B9E8] font-bold text-center border border-[#28B9E8]"
+                >
+                  {">"} Go to bot
                 </a>
               </div>
             </div>
@@ -118,21 +144,21 @@ export default function Bot() {
             <div className="flex gap-x-2">
               <div className="rounded-[8px] px-[16px] py-[10px] bg-[#FFFACD] w-fit">
                 <span className="text-[36px] text-[#D88C0D] font-bold">
-                  {botResult?.attributes?.rating}%
+                  {botResult?.attributes?.rating ?? "0"}%
                 </span>
               </div>
               <div>
                 <p className="text-[24px] text-[#D88C0D]">Rated</p>
                 <p className="text-[20px] text-[#D88C0D]">
-                  {botResult?.attributes?.reviews} reviews
+                  {botResult?.attributes?.reviews ?? "0"} reviews
                 </p>
               </div>
             </div>
-            <div className="my-3 flex justify-between">
-              <p>Contribute your rating</p>
-              <p className="text-[#D88C0D]">1/5</p>
+            <div className="my-3 flex">
+              <p>Contribute your rating&nbsp;</p>
+              <p className="text-[#D88C0D]">{hover === 0 ? rating : hover}/5</p>
             </div>
-            <div className="flex justify-between">
+            <div className="flex justify-center flex-1">
               {[...Array(5)].map((star, index) => {
                 index += 1;
                 return (
@@ -145,7 +171,7 @@ export default function Bot() {
                   >
                     {index <= (hover || rating) ? (
                       <Image
-                        className="cursor-pointer md:w-[56px] w-[32px]"
+                        className="cursor-pointer md:w-[56px] w-[32px] px-2"
                         src={`/img/star-filled.svg`}
                         width={56}
                         height={56}
@@ -153,7 +179,7 @@ export default function Bot() {
                       />
                     ) : (
                       <Image
-                        className="cursor-pointer md:w-[56px] w-[32px]"
+                        className="cursor-pointer md:w-[56px] w-[32px] px-2"
                         src={`/img/star-outlined.svg`}
                         width={56}
                         height={56}
@@ -165,7 +191,36 @@ export default function Bot() {
               })}
             </div>
             <div className="my-5 flex justify-center items-center">
-              <a className="border text-[#D88C0D] font-semibold border-[#D88C0D] rounded-[39px] px-[19px] py-[12px] w-full text-center cursor-pointer">
+              <a
+                onClick={async () => {
+                  try {
+                    if (ratingResult) {
+                      await axiosApi.put(`/api/ratings/${ratingResult?.id}`, {
+                        data: {
+                          rating: rating,
+                          user_account: userResult?.id,
+                          bot: botResult?.id,
+                        },
+                      });
+                    } else {
+                      await axiosApi.post("/api/ratings", {
+                        data: {
+                          rating: rating,
+                          user_account: userResult?.id,
+                          bot: botResult?.id,
+                        },
+                      });
+                    }
+                    Toast.fire({
+                      icon: "success",
+                      title: "Successfully submitted rating!",
+                    });
+                  } catch (e) {
+                    console.log(e);
+                  }
+                }}
+                className="border text-[#D88C0D] font-semibold border-[#D88C0D] rounded-[39px] px-[19px] py-[12px] w-full text-center cursor-pointer"
+              >
                 Submit Score
               </a>
             </div>
@@ -206,16 +261,6 @@ export default function Bot() {
           will review the issue and take appropriate action if it violates our
           guidelines.
         </p>
-        <Select
-          defaultValue="lucy"
-          // onChange={handleChange}
-          className="w-full rounded-[12px]"
-          options={[
-            { value: "jack", label: "Jack" },
-            { value: "lucy", label: "Lucy" },
-            { value: "Yiminghe", label: "yiminghe" },
-          ]}
-        />
         <p className="text-[16px] font-bold text-[#718096] my-3">
           Tell us more about the problem
         </p>

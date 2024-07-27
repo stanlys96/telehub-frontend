@@ -1,26 +1,26 @@
 import Image from "next/image";
-// import { useRouter } from "next/router";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const BotSearchComponent = ({ attributes }) => {
-  // const router = useRouter();
+  const router = useRouter();
+  const imageUrl = attributes?.image?.data?.attributes?.url
+    ? process.env.NEXT_PUBLIC_AXIOS_API +
+      attributes?.image?.data?.attributes?.url
+    : "/img/example.png";
   return (
     <div
-      onClick={() => {}}
+      onClick={() => router.push(`/bot/${attributes?.id}`)}
       className="hover:bg-[#F1FCFE] h-fit w-full bg-white transition duration-250 rounded-[16px] border border-[#FFFFFF] cursor-pointer hover:border-[#28B9E8]"
     >
       <div className="flex justify-center items-center bg-[#9EE7FF] rounded-t-[16px] py-3">
-        {attributes?.image?.data?.attributes?.url && (
-          <Image
-            width={100}
-            height={100}
-            alt="img"
-            src={
-              process.env.NEXT_PUBLIC_AXIOS_API +
-                attributes?.image?.data?.attributes?.url ?? ""
-            }
-            className="h-fit"
-          />
-        )}
+        <Image
+          width={100}
+          height={100}
+          alt="img"
+          src={imageUrl}
+          className="h-fit"
+        />
       </div>
       <div className="p-[16px]">
         <div className="flex flex-col gap-y-3 justify-center">
@@ -29,11 +29,17 @@ export const BotSearchComponent = ({ attributes }) => {
             {attributes?.chain?.data?.attributes?.name} Chain,{" "}
             {attributes?.members} members
           </p>
-          <a className="px-[19px] py-[8px] justify-center rounded-[39px] border-[#28B9E8] border-[1px] flex gap-x-2 cursor-pointer">
-            <Image width={24} height={24} alt="download" src="/img/plus.svg" />
-            <span className="font-bold  text-[16px] text-[#28B9E8]">
-              Add Bot
-            </span>
+          <a
+            onClick={(e) => {
+              e.stopPropagation();
+              window.open(
+                `https://t.me/${attributes?.username?.replaceAll("@", "")}`,
+                "_blank"
+              );
+            }}
+            className="px-[19px] hover:bg-[#28B9E8] hover:text-white transition duration-300 text-[#28B9E8] py-[8px] justify-center rounded-[39px] border-[#28B9E8] border-[1px] flex gap-x-2 cursor-pointer"
+          >
+            <span className="font-bold  text-[16px]">{">"} Go to bot</span>
           </a>
         </div>
         <div className="flex flex-row justify-between mt-5 items-end gap-y-2">
@@ -52,11 +58,11 @@ export const BotSearchComponent = ({ attributes }) => {
             <div>
               <p className="text-[#D88C0D] text-right">Rated</p>
               <p className="text-[#D88C0D] text-[10px] text-right">
-                {attributes?.reviews} views
+                {attributes?.reviews ?? "0"} views
               </p>
             </div>
             <div className="bg-[#FFFACD] px-[16px] py-[10px] font-semibold text-[#D88C0D] rounded-[8px] h-fit">
-              {attributes?.rating}%
+              {attributes?.rating ?? "0"}%
             </div>
           </div>
         </div>

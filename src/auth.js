@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { axiosApi } from "./utils/axios";
 
 export const {
   handlers: { GET, POST },
@@ -22,7 +23,19 @@ export const {
   ],
   callbacks: {
     async signIn(provider, options) {
-      console.log(provider, "<<< PROVIDER");
+      const response = await axiosApi.get(
+        `/api/user-accounts?filters[email][$eq]=${provider.user?.email}`
+      );
+      const result = response?.data?.data;
+      if (result?.length === 0) {
+        await axiosApi.post("/api/user-accounts", {
+          data: {
+            email: provider?.user?.email,
+            name: provider?.user?.name,
+            imageUrl: provider?.user?.image,
+          },
+        });
+      }
       return true; // Return true to proceed with the login
     },
     async jwt({ token, user, account }) {
@@ -37,8 +50,7 @@ export const {
       if (user?.username) {
         token.username = user.username;
       }
-      console.log(token, "<<< TOKEN");
-      console.log(user, "<<< USER");
+
       return token;
     },
     async session({ session, token }) {
@@ -48,7 +60,6 @@ export const {
       if (token?.username) {
         session.username = token.username;
       }
-      console.log(session, "<<<");
       // Add access token to the session object
       // if (token.accessToken) {
       // 	session.accessToken = token.accessToken;

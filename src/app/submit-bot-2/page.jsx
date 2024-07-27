@@ -3,19 +3,53 @@ import { MainLayout } from "@/layouts/MainLayout";
 import Image from "next/image";
 import { useState } from "react";
 import { Select, Input } from "antd";
-import { signIn, signOut, useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { doSocialLogin } from "../actions";
 import { SessionProvider } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
-import Link from "next/link";
+import { Spin } from "antd";
+import useSWR from "swr";
+import { axiosApi, fetcherStrapi } from "@/utils/axios";
+import Swal from "sweetalert2";
 
 const { TextArea } = Input;
+
+const Toast = Swal.mixin({
+  toast: true,
+  position: "top-end",
+  showConfirmButton: false,
+  timer: 3000,
+  timerProgressBar: true,
+  didOpen: (toast) => {
+    toast.onmouseenter = Swal.close;
+  },
+});
 
 export default function SubmitBot() {
   const session = useSession();
   const router = useRouter();
+  const { data: userData } = useSWR(
+    `/api/user-accounts?filters[email][$eq]=${session?.data?.user?.email}`,
+    fetcherStrapi
+  );
+  const userResult = userData?.data?.data?.[0];
+  const { data: categoriesData } = useSWR(`/api/subcategories`, fetcherStrapi);
+  const categoriesResult = categoriesData?.data?.data;
 
+  const theCategories = categoriesResult?.map((data) => ({
+    id: data?.id,
+    label: data?.attributes?.title,
+    value: data?.id,
+  }));
+  const [loading, setLoading] = useState(false);
+  const [botName, setBotName] = useState("");
+  const [botUsername, setBotUsername] = useState("");
+  const [botCategory, setBotCategory] = useState();
+  const [botDescription, setBotDescription] = useState("");
+  const handleChange = (value) => {
+    setBotCategory(value);
+  };
   return (
     <SessionProvider>
       <MainLayout>
@@ -64,31 +98,80 @@ export default function SubmitBot() {
             {session?.data && (
               <div className="flex flex-col gap-y-4 flex-1">
                 <Input
+                  value={botName}
+                  onChange={(e) => setBotName(e.target.value)}
                   className="w-[85vw] md:w-full"
                   placeholder="Telegram bot name"
                 />
-                <Input placeholder="Telegram bot username (ex:@telegram_bot)" />
+                <Input
+                  value={botUsername}
+                  onChange={(e) => setBotUsername(e.target.value)}
+                  placeholder="Telegram bot username (ex:@telegram_bot)"
+                />
                 <Select
-                  defaultValue="lucy"
-                  // onChange={handleChange}
+                  value={botCategory}
+                  // defaultValue="lucy"
+                  onChange={handleChange}
+                  placeholder="Bot Category"
                   className="w-full rounded-[12px]"
-                  options={[
-                    { value: "jack", label: "Jack" },
-                    { value: "lucy", label: "Lucy" },
-                    { value: "Yiminghe", label: "yiminghe" },
-                  ]}
+                  options={theCategories}
                 />
                 <TextArea
+                  value={botDescription}
+                  onChange={(e) => setBotDescription(e.target.value)}
                   rows={6}
                   placeholder="Telegram Bot Description (max 250 characters)"
                   maxLength={250}
                 />
-                <a
-                  onClick={() => router.push("/")}
-                  className="cursor-pointer md:text-[16px] text-[12px] font-bold block w-full rounded-[12px] py-[16px] text-center bg-[#6CC1E3]"
-                >
-                  Submit Bot
-                </a>
+                {!loading ? (
+                  <a
+                    onClick={async () => {
+                      if (
+                        !botName ||
+                        !botUsername ||
+                        !botDescription ||
+                        !botCategory
+                      ) {
+                        return Swal.fire({
+                          title: "Validation",
+                          text: "Please fill all fields!",
+                          icon: "info",
+                        });
+                      }
+                      try {
+                        setLoading(true);
+                        const response = await axiosApi.post("/api/bots", {
+                          data: {
+                            title: botName,
+                            username: "@" + botUsername?.replaceAll("@", ""),
+                            description: botDescription,
+                            subcategory: botCategory,
+                            user_account: userResult?.id,
+                          },
+                        });
+                        setLoading(false);
+                        if (response?.status === 200) {
+                          setBotUsername("");
+                          setBotCategory(null);
+                          setBotDescription("");
+                          setBotName("");
+                          Toast.fire({
+                            icon: "success",
+                            title: "Registered bot successfully!",
+                          });
+                        }
+                      } catch (e) {
+                        setLoading(false);
+                        console.log(e, "<< E");
+                      }
+                    }}
+                    className="cursor-pointer md:text-[16px] text-[12px] font-bold block w-full rounded-[12px] py-[16px] text-center bg-[#6CC1E3]"
+                  >
+                    Submit Bot
+                  </a>
+                ) : (
+                  <Spin className="mt-2" size="large" />
+                )}
               </div>
             )}
             <a

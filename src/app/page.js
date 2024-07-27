@@ -10,10 +10,30 @@ import { BotSearchComponent } from "@/components/BotSearchComponent";
 import { Spin } from "antd";
 // import { useRouter } from "next/router";
 
+const filterPublished = (data) => {
+  return data?.attributes?.published;
+};
+
+const getUniqueBy = (array) => {
+  const seen = new Set();
+  return array?.reduce((acc, item) => {
+    if (!seen.has(item?.attributes?.subcategory?.data?.attributes?.title)) {
+      seen.add(item?.attributes?.subcategory?.data?.attributes?.title);
+      acc.push(item);
+    }
+    return acc;
+  }, []);
+};
+
 export default function Home() {
   // const router = useRouter();
   const { data: categoriesData } = useSWR(
     `/api/categories?populate=deep,10`,
+    fetcherStrapi
+  );
+
+  const { data: originalBotsData } = useSWR(
+    `/api/bots?populate=deep,10?_sort=id:ASC`,
     fetcherStrapi
   );
 
@@ -27,6 +47,10 @@ export default function Home() {
   const [selectedChain, setSelectedChain] = useState("");
   const categoriesResult = categoriesData?.data?.data;
   const subcategoriesResult = subcategoriesData?.data?.data;
+  const originalBotsResult = originalBotsData?.data?.data;
+
+  const botsFiltered = originalBotsResult?.filter(filterPublished);
+  const botsPerCategory = getUniqueBy(botsFiltered);
 
   const [searchQuery, setSearchQuery] = useState("");
   const ratingOptions = [
@@ -62,7 +86,7 @@ export default function Home() {
     },
   ];
   const { data: botsData, isLoading: botLoading } = useSWR(
-    `/api/bots?populate=*&filters[title][$containsi]=${searchQuery}`,
+    `/api/bots?populate=*&filters[title][$containsi]=${searchQuery}&filters[published][$eq]=true`,
     fetcherStrapi
   );
 
@@ -118,6 +142,24 @@ export default function Home() {
     childLength: data?.attributes?.bots?.data?.length,
   }));
 
+  const theCategories = [
+    {
+      id: 1,
+      title: "Top Trending",
+      botsData: botsFiltered,
+    },
+    {
+      id: 2,
+      title: "Top bot per category",
+      botsData: botsPerCategory,
+    },
+    {
+      id: 3,
+      title: "Recently Added",
+      botsData: botsFiltered,
+    },
+  ];
+
   return (
     <MainLayout>
       <div
@@ -171,8 +213,12 @@ export default function Home() {
         </div>
       </div>
       {!searchQuery &&
-        categoriesResult?.map((data, idx) => (
-          <CategoryComponent key={data?.id} attributes={data?.attributes} />
+        theCategories?.map((data, idx) => (
+          <CategoryComponent
+            key={data?.id}
+            title={data?.title}
+            botsData={data?.botsData}
+          />
         ))}
       {searchQuery && (
         <div className="flex md:flex-row flex-col gap-x-10 px-[10px] md:px-[25px] py-[25px]">

@@ -1,12 +1,10 @@
-// import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 
 export const MainLayout = ({ children }) => {
-  // const router = useRouter();
   return (
     <main>
-      <div className="bg-white px-[10px] md:px-[150px] py-[32px] flex justify-between border-[#D6D6D6] border-b">
+      <div className="bg-white px-[10px] md:px-[150px] py-[32px] flex justify-between items-center border-[#D6D6D6] border-b">
         <Link href="/" onClick={() => {}} className="cursor-pointer">
           <Image
             width={197}

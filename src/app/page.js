@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Checkbox, Col, Input } from "antd";
 import { BotSearchComponent } from "@/components/BotSearchComponent";
 import { Spin } from "antd";
+import { SecondCategoryComponent } from "@/components/SecondCategoryComponent";
 // import { useRouter } from "next/router";
 
 const filterPublished = (data) => {
@@ -212,13 +213,17 @@ export default function Home() {
           </div>
         </div>
       </div>
-      {!searchQuery &&
+      {/* {!searchQuery &&
         theCategories?.map((data, idx) => (
           <CategoryComponent
             key={data?.id}
             title={data?.title}
             botsData={data?.botsData}
           />
+        ))} */}
+      {!searchQuery &&
+        categoriesResult?.map((data, idx) => (
+          <SecondCategoryComponent attributes={data?.attributes} />
         ))}
       {searchQuery && (
         <div className="flex md:flex-row flex-col gap-x-10 px-[10px] md:px-[25px] py-[25px]">

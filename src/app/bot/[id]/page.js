@@ -10,7 +10,7 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { FaGoogle } from "react-icons/fa";
-import { doSocialLogin, doSocialLoginBot } from "@/app/actions";
+import { doLogoutBot, doSocialLogin, doSocialLoginBot } from "@/app/actions";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -109,10 +109,10 @@ export default function Bot() {
             {"<"} Return to previous page
           </Link>
           <form
-            action={
+            action={(formData) =>
               session?.data?.user
-                ? signOut
-                : (formData) => doSocialLoginBot(formData, botResult?.id)
+                ? doLogoutBot(formData, botResult?.id)
+                : doSocialLoginBot(formData, botResult?.id)
             }
           >
             {session?.data?.user ? (

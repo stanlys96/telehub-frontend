@@ -3,9 +3,9 @@ import { MainLayout } from "@/layouts/MainLayout";
 import Image from "next/image";
 import { useState } from "react";
 import { Select, Input } from "antd";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { doSocialLogin } from "../actions";
+import { doLogout, doSocialLogin } from "../actions";
 import { SessionProvider } from "next-auth/react";
 import { FaGoogle } from "react-icons/fa";
 import { Spin } from "antd";
@@ -65,7 +65,7 @@ export default function SubmitBot() {
             <p className="text-[20px] md:text-[32px] font-bold text-center">
               Telehub bot submission
             </p>
-            <form action={session?.data?.user ? signOut : doSocialLogin}>
+            <form action={session?.data?.user ? doLogout : doSocialLogin}>
               {session?.data?.user ? (
                 <button
                   type="submit"

@@ -65,7 +65,16 @@ export default function SubmitBot() {
             <p className="text-[20px] md:text-[32px] font-bold text-center">
               Telehub bot submission
             </p>
-            <form action={session?.data?.user ? doLogout : doSocialLogin}>
+            <form
+              action={async (formData) => {
+                if (session?.data?.user) {
+                  await doLogout(formData);
+                  window.location.reload();
+                } else {
+                  doSocialLogin(formData);
+                }
+              }}
+            >
               {session?.data?.user ? (
                 <button
                   type="submit"

@@ -109,11 +109,14 @@ export default function Bot() {
             {"<"} Return to previous page
           </Link>
           <form
-            action={(formData) =>
-              session?.data?.user
-                ? doLogoutBot(formData, botResult?.id)
-                : doSocialLoginBot(formData, botResult?.id)
-            }
+            action={async (formData) => {
+              if (session?.data?.user) {
+                await doLogoutBot(formData, botResult?.id);
+                window.location.reload();
+              } else {
+                doSocialLoginBot(formData, botResult?.id);
+              }
+            }}
           >
             {session?.data?.user ? (
               <button

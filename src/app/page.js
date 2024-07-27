@@ -223,7 +223,10 @@ export default function Home() {
         ))} */}
       {!searchQuery &&
         categoriesResult?.map((data, idx) => (
-          <SecondCategoryComponent attributes={data?.attributes} />
+          <SecondCategoryComponent
+            key={data?.id}
+            attributes={data?.attributes}
+          />
         ))}
       {searchQuery && (
         <div className="flex md:flex-row flex-col gap-x-10 px-[10px] md:px-[25px] py-[25px]">

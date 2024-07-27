@@ -1,14 +1,12 @@
 import Image from "next/image";
-// import { useRouter } from "next/router";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 export const BotComponent = ({ attributes }) => {
-  // const router = useRouter();
+  const router = useRouter();
   return (
-    <div
-      onClick={
-        () => {}
-        // router.push({ pathname: "/bot", query: { id: attributes?.id } })
-      }
+    <Link
+      href={`/bot/${attributes?.id}`}
       className="hover:bg-[#F1FCFE] bg-white transition duration-250 rounded-[16px] border border-[#FFFFFF] cursor-pointer hover:border-[#28B9E8]"
     >
       <div className="md:hidden flex justify-center items-center bg-[#9EE7FF] rounded-t-[16px] py-3">
@@ -78,6 +76,6 @@ export const BotComponent = ({ attributes }) => {
         <hr className="block md:hidden my-5" />
         <p className="block md:hidden">{attributes?.description}</p>
       </div>
-    </div>
+    </Link>
   );
 };

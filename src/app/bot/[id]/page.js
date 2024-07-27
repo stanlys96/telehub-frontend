@@ -6,12 +6,13 @@ import { Select, Modal, Input } from "antd";
 import useSWR from "swr";
 import { fetcherStrapi } from "@/utils/axios";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams, usePathname } from "next/navigation";
 
 const { TextArea } = Input;
 
 export default function Bot() {
-  const router = useRouter();
+  const pathname = usePathname();
+  const queryId = pathname?.split("/")?.[2];
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
@@ -28,7 +29,7 @@ export default function Bot() {
   const [hover, setHover] = useState(0);
   const [rating, setRating] = useState(0);
   const { data: botData } = useSWR(
-    `/api/bots/${router.query?.id}?populate=*`,
+    `/api/bots/${queryId}?populate=*`,
     fetcherStrapi
   );
   const botResult = botData?.data?.data;

@@ -36,6 +36,7 @@ export default function SubmitBot() {
   const userResult = userData?.data?.data?.[0];
   const { data: categoriesData } = useSWR(`/api/subcategories`, fetcherStrapi);
   const categoriesResult = categoriesData?.data?.data;
+  const [selectedImage, setSelectedImage] = useState();
 
   const theCategories = categoriesResult?.map((data) => ({
     id: data?.id,
@@ -116,6 +117,28 @@ export default function SubmitBot() {
                   className="w-full rounded-[12px]"
                   options={theCategories}
                 />
+                {selectedImage && (
+                  <div className="flex justify-center items-center">
+                    <img
+                      className="w-[200px] h-[200px]"
+                      src={`${
+                        !selectedImage
+                          ? "/img/upload_id.svg"
+                          : URL.createObjectURL(selectedImage)
+                      }`}
+                      alt="upload"
+                    />
+                  </div>
+                )}
+                <Input
+                  accept="image/*"
+                  multiple={false}
+                  onChange={(e) => {
+                    setSelectedImage(e?.target?.files?.[0]);
+                  }}
+                  type="file"
+                  placeholder="Upload Image"
+                />
                 <TextArea
                   value={botDescription}
                   onChange={(e) => setBotDescription(e.target.value)}
@@ -130,7 +153,8 @@ export default function SubmitBot() {
                         !botName ||
                         !botUsername ||
                         !botDescription ||
-                        !botCategory
+                        !botCategory ||
+                        !selectedImage
                       ) {
                         return Swal.fire({
                           title: "Validation",
@@ -149,6 +173,25 @@ export default function SubmitBot() {
                             user_account: userResult?.id,
                           },
                         });
+                        const data = new FormData();
+                        data.append(
+                          "file",
+                          selectedImage,
+                          session?.data?.user?.email + ".png"
+                        );
+                        data.append("files", selectedImage);
+                        data.append("ref", "api::bot.bot");
+                        data.append("refId", response?.data?.data?.id);
+                        data.append("field", "image");
+                        try {
+                          const uploadRes = await axiosApi({
+                            method: "POST",
+                            url: "/api/upload",
+                            data,
+                          });
+                        } catch (e) {
+                          console.log(e);
+                        }
                         setLoading(false);
                         if (response?.status === 200) {
                           setBotUsername("");

@@ -7,8 +7,10 @@ import useSWR from "swr";
 import { axiosApi, fetcherStrapi } from "@/utils/axios";
 import Link from "next/link";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
+import { FaGoogle } from "react-icons/fa";
+import { doSocialLogin, doSocialLoginBot } from "@/app/actions";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -31,6 +33,7 @@ export default function Bot() {
     `/api/user-accounts?filters[email][$eq]=${session?.data?.user?.email}`,
     fetcherStrapi
   );
+  console.log(session?.data, "<< <DATA");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -38,6 +41,13 @@ export default function Bot() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const showModal = () => {
+    if (!session?.data) {
+      return Swal.fire({
+        title: "Google login",
+        text: "Please login with your google account first.",
+        icon: "info",
+      });
+    }
     setIsModalOpen(true);
   };
 
@@ -94,9 +104,48 @@ export default function Bot() {
   return (
     <MainLayout>
       <div className="px-[16px] md:px-[100px] py-[50px]">
-        <Link href="/" className="cursor-pointer underline">
-          {"<"} Return to previous page
-        </Link>
+        <div className="flex justify-between items-center md:flex-row flex-col gap-y-2">
+          <Link href="/" className="cursor-pointer underline">
+            {"<"} Return to previous page
+          </Link>
+          <form
+            action={
+              session?.data?.user
+                ? signOut
+                : (formData) => doSocialLoginBot(formData, botResult?.id)
+            }
+          >
+            {session?.data?.user ? (
+              <button
+                type="submit"
+                name="action"
+                value="google"
+                className="rounded-[30px] w-fit mx-auto cursor-pointer px-[27px] py-[10px] bg-[#28B9E8] flex items-center gap-x-2"
+              >
+                <Image
+                  width={30}
+                  height={30}
+                  alt="walao"
+                  src={session?.data?.user?.image ?? ""}
+                  className="rounded-full"
+                />
+                <span className="text-white font-bold">
+                  {session?.data?.user?.email}
+                </span>
+              </button>
+            ) : (
+              <button
+                type="submit"
+                name="action"
+                value="google"
+                className="rounded-[30px] w-fit mx-auto cursor-pointer px-[27px] py-[10px] bg-[#28B9E8] flex items-center gap-x-2"
+              >
+                <FaGoogle color="#FFFFFF" />
+                <span className="text-white">Sign in with Google</span>
+              </button>
+            )}
+          </form>
+        </div>
         <div className="grid md:grid-cols-3 gap-5 mt-5">
           <div className="flex flex-col md:gap-5 col-span-2">
             <div className="md:hidden flex justify-center items-center bg-[#9EE7FF] rounded-t-[16px] py-3">
@@ -215,6 +264,13 @@ export default function Bot() {
             <div className="my-5 flex justify-center items-center">
               <a
                 onClick={async () => {
+                  if (!session?.data) {
+                    return Swal.fire({
+                      title: "Google login",
+                      text: "Please login with your google account first.",
+                      icon: "info",
+                    });
+                  }
                   try {
                     if (ratingResult) {
                       await axiosApi.put(`/api/ratings/${ratingResult?.id}`, {

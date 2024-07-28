@@ -84,10 +84,7 @@ export default function Bot() {
     fetcherStrapi
   );
   const botResult = botData?.data?.data;
-  const imageUrl = botResult?.attributes?.image?.data?.attributes?.url
-    ? process.env.NEXT_PUBLIC_AXIOS_API +
-      botResult?.attributes?.image?.data?.attributes?.url
-    : "/img/example.png";
+  const imageUrl = botResult?.attributes?.imageUrl ?? "/img/example.png";
   const { data: ratingData } = useSWR(
     `/api/ratings?filters[user_account][$eq]=${userResult?.id}&filters[bot][$eq]=${botResult?.id}`,
     fetcherStrapi

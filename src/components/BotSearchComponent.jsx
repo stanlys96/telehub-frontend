@@ -4,10 +4,7 @@ import { useRouter } from "next/navigation";
 
 export const BotSearchComponent = ({ attributes }) => {
   const router = useRouter();
-  const imageUrl = attributes?.image?.data?.attributes?.url
-    ? process.env.NEXT_PUBLIC_AXIOS_API +
-      attributes?.image?.data?.attributes?.url
-    : "/img/example.png";
+  const imageUrl = attributes?.imageUrl ?? "/img/example.png";
   return (
     <div
       onClick={() => router.push(`/bot/${attributes?.id}`)}

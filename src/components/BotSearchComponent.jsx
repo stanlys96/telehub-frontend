@@ -65,7 +65,14 @@ export const BotSearchComponent = ({ attributes }) => {
           </div>
         </div>
         <hr className="block my-5" />
-        <p className="block">{attributes?.description}</p>
+        <div
+          dangerouslySetInnerHTML={{
+            __html:
+              attributes?.description
+                .replaceAll("\\n", "<br />")
+                .slice(0, 200) + "...",
+          }}
+        />
       </div>
     </div>
   );

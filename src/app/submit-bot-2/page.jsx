@@ -173,6 +173,27 @@ export default function SubmitBot() {
                       }
                       try {
                         setLoading(true);
+                        const checkBot = await axiosApi.get(
+                          `/api/bots?filters[username][$eqi]=${botUsername?.replaceAll(
+                            "@",
+                            ""
+                          )}`
+                        );
+                        if (checkBot?.data?.data?.length > 0) {
+                          setLoading(false);
+                          return Swal.fire({
+                            title: "Validation",
+                            text: "A bot with this username has been submitted!",
+                            icon: "info",
+                          });
+                        }
+                      } catch (e) {
+                        setLoading(false);
+                        console.log(e, "<< E");
+                      }
+
+                      try {
+                        setLoading(true);
                         const response = await axiosApi.post("/api/bots", {
                           data: {
                             title: botName,

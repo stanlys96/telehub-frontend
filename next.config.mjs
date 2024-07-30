@@ -10,6 +10,10 @@ const nextConfig = {
         protocol: "https",
         hostname: "telehub-cms-production.up.railway.app",
       },
+      {
+        protocol: "https",
+        hostname: "drive.google.com",
+      },
     ],
   },
 };

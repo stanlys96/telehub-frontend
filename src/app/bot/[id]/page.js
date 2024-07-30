@@ -11,6 +11,7 @@ import { signOut, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { FaGoogle } from "react-icons/fa";
 import { doLogoutBot, doSocialLogin, doSocialLoginBot } from "@/app/actions";
+import { transformGoogleDriveUrl } from "@/utils/helper";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -33,7 +34,7 @@ export default function Bot() {
     `/api/user-accounts?filters[email][$eq]=${session?.data?.user?.email}`,
     fetcherStrapi
   );
-  console.log(session?.data, "<< <DATA");
+
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -149,11 +150,21 @@ export default function Bot() {
         <div className="grid md:grid-cols-3 gap-5 mt-5">
           <div className="flex flex-col md:gap-5 col-span-2">
             <div className="md:hidden flex justify-center items-center bg-[#9EE7FF] rounded-t-[16px] py-3">
-              <Image width={100} height={100} alt="img" src={imageUrl} />
+              <Image
+                width={100}
+                height={100}
+                alt="img"
+                src={transformGoogleDriveUrl(botResult?.attributes?.imageUrl)}
+              />
             </div>
             <div className="rounded-b-[12px] md:rounded-[12px] bg-white p-[12px] md:p-[24px] flex gap-x-4">
               <div className="hidden md:block">
-                <Image src={imageUrl} width={180} height={180} alt="example" />
+                <Image
+                  src={transformGoogleDriveUrl(botResult?.attributes?.imageUrl)}
+                  width={180}
+                  height={180}
+                  alt="example"
+                />
               </div>
               <div className="w-full">
                 <div className="flex justify-between items-center w-full">
@@ -206,7 +217,14 @@ export default function Bot() {
             <div className="md:mt-0 mt-5 rounded-[12px] bg-white p-[24px]">
               <p>Bot Description</p>
               <hr className="my-5" />
-              <p>{botResult?.attributes?.description}</p>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: botResult?.attributes?.description.replaceAll(
+                    "\\n",
+                    "<br />"
+                  ),
+                }}
+              />
             </div>
           </div>
           <div className="rounded-[12px] bg-white p-[35px]">

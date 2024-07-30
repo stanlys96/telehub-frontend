@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { transformGoogleDriveUrl } from "@/utils/helper";
 
 export const BotSearchComponent = ({ attributes }) => {
   const router = useRouter();
@@ -15,7 +16,7 @@ export const BotSearchComponent = ({ attributes }) => {
           width={100}
           height={100}
           alt="img"
-          src={imageUrl}
+          src={transformGoogleDriveUrl(imageUrl)}
           className="h-fit"
         />
       </div>

@@ -30,7 +30,7 @@ export const MainLayout = ({ children }) => {
       {children}
       <div className="py-[75px] bg-white border-[#D6D6D6] border-t flex flex-col justify-center items-center gap-y-4">
         <Image width={135} height={140} alt="download" src="/img/telehub.svg" />
-        <p>tagline here</p>
+        <p>Your one stop telegram directory for your needs</p>
         <Image width={36} height={36} alt="download" src="/img/telegram.svg" />
         <p className="font-semibold">&copy; 2024 telehub.bot</p>
       </div>

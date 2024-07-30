@@ -176,7 +176,7 @@ export default function Home() {
               Discover top-tier Telegram bots
             </p>
             <p className="text-[24px] md:text-[40px] md:mt-0 mt-4 font-bold text-center font-extralight">
-              Number one telegram directory for your needs
+              Your one stop telegram directory for your needs
             </p>
           </div>
         )}

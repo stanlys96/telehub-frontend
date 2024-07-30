@@ -1,3 +1,4 @@
+import { transformGoogleDriveUrl } from "@/utils/helper";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -5,6 +6,7 @@ import { useRouter } from "next/navigation";
 export const BotComponent = ({ attributes }) => {
   const router = useRouter();
   const imageUrl = attributes?.imageUrl ?? "/img/example.png";
+  console.log(attributes?.imageUrl, "<<< ATTRIBUTES ASD");
   return (
     <div
       onClick={() => router.push(`/bot/${attributes?.id}`)}
@@ -15,7 +17,7 @@ export const BotComponent = ({ attributes }) => {
           width={100}
           height={100}
           alt="img"
-          src={imageUrl}
+          src={transformGoogleDriveUrl(imageUrl)}
           className="h-fit"
         />
       </div>
@@ -25,7 +27,7 @@ export const BotComponent = ({ attributes }) => {
           height={100}
           alt="img"
           className="hidden md:block h-fit"
-          src={imageUrl}
+          src={transformGoogleDriveUrl(imageUrl)}
         />
         <div className="flex flex-col gap-y-3 justify-center">
           <p className="font-semibold">{attributes?.title}</p>
@@ -71,7 +73,9 @@ export const BotComponent = ({ attributes }) => {
           </div>
         </div>
         <hr className="block md:hidden my-5" />
-        <p className="block md:hidden">{attributes?.description}</p>
+        <p className="block md:hidden">
+          {attributes?.description?.slice(0, 100) + "..."}
+        </p>
       </div>
     </div>
   );

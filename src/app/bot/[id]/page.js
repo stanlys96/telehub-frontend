@@ -156,13 +156,21 @@ export default function Bot() {
                 width={100}
                 height={100}
                 alt="img"
-                src={transformGoogleDriveUrl(botResult?.attributes?.imageUrl)}
+                src={
+                  transformGoogleDriveUrl(
+                    botResult?.attributes?.imageUrl ?? "/img/example.png"
+                  ) ?? "/img/example.png"
+                }
               />
             </div>
             <div className="rounded-b-[12px] md:rounded-[12px] bg-white p-[12px] md:p-[24px] flex gap-x-4">
               <div className="hidden md:block">
                 <Image
-                  src={transformGoogleDriveUrl(botResult?.attributes?.imageUrl)}
+                  src={
+                    transformGoogleDriveUrl(
+                      botResult?.attributes?.imageUrl ?? "/img/example.png"
+                    ) ?? "/img/example.png"
+                  }
                   width={180}
                   height={180}
                   alt="example"

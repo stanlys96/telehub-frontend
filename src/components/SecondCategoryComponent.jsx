@@ -1,7 +1,15 @@
 import { BotComponent } from "@/components/BotComponent";
 import Image from "next/image";
+import { Pagination } from "antd";
+import { Spin } from "antd";
 
-export const SecondCategoryComponent = ({ attributes }) => {
+export const SecondCategoryComponent = ({
+  attributes,
+  botData,
+  paginationData,
+  setPageFunction,
+  isLoading,
+}) => {
   return (
     <div className="p-[16px] md:p-[32px]">
       <div className="flex justify-between items-center">
@@ -21,15 +29,31 @@ export const SecondCategoryComponent = ({ attributes }) => {
           />
         </a>
       </div>
-      <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-[16px] mt-[16px]">
-        {attributes?.bots?.data
-          ?.filter((data) => data?.attributes?.published)
-          ?.map((data, idx) => (
-            <BotComponent
-              key={data?.id}
-              attributes={{ ...data?.attributes, id: data?.id }}
-            />
-          ))}
+      {isLoading ? (
+        <div className="flex justify-center items-center w-full h-[250px]">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className="grid lg:grid-cols-2 xl:grid-cols-3 gap-[16px] mt-[16px]">
+          {botData
+            ?.filter((data) => data?.attributes?.published)
+            ?.map((data, idx) => (
+              <BotComponent
+                key={data?.id}
+                attributes={{ ...data?.attributes, id: data?.id }}
+              />
+            ))}
+        </div>
+      )}
+      <div className="flex justify-center items-center">
+        <Pagination
+          className="mt-5"
+          defaultCurrent={paginationData?.page ?? "1"}
+          current={paginationData?.page ?? "1"}
+          total={paginationData?.total ?? "1"}
+          pageSize={paginationData?.pageSize ?? "1"}
+          onChange={(e) => setPageFunction(e)}
+        />
       </div>
     </div>
   );

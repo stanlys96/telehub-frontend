@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 export const BotComponent = ({ attributes }) => {
   const router = useRouter();
   const imageUrl = attributes?.imageUrl ?? "/img/example.png";
-  console.log(attributes?.imageUrl, "<<< ATTRIBUTES ASD");
   return (
     <div
       onClick={() => router.push(`/bot/${attributes?.id}`)}

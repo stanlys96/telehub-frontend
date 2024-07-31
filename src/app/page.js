@@ -33,8 +33,28 @@ export default function Home() {
     fetcherStrapi
   );
 
-  const { data: originalBotsData } = useSWR(
-    `/api/bots?populate=deep,10?_sort=id:ASC`,
+  const [currentGamePage, setCurrentGamePage] = useState(1);
+  const [currentToolsPage, setCurrentToolsPage] = useState(1);
+  const [currentSocialPage, setCurrentSocialPage] = useState(1);
+  const [currentWeb3ToolsPage, setCurrentWeb3ToolsPage] = useState(1);
+
+  const { data: gameBotsData, isLoading: gameBotsLoading } = useSWR(
+    `/api/bots?filters[theCategory][$eqi]=game&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentGamePage}&pagination[pageSize]=6`,
+    fetcherStrapi
+  );
+
+  const { data: toolsBotsData, isLoading: toolsBotsLoading } = useSWR(
+    `/api/bots?filters[theCategory][$eqi]=tools&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentToolsPage}&pagination[pageSize]=6`,
+    fetcherStrapi
+  );
+
+  const { data: socialBotsData, isLoading: socialBotsLoading } = useSWR(
+    `/api/bots?filters[theCategory][$eqi]=social&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentSocialPage}&pagination[pageSize]=6`,
+    fetcherStrapi
+  );
+
+  const { data: web3ToolsBotsData, isLoading: web3ToolsBotsLoading } = useSWR(
+    `/api/bots?filters[theCategory][$eqi]=Web3 tools&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentWeb3ToolsPage}&pagination[pageSize]=6`,
     fetcherStrapi
   );
 
@@ -48,10 +68,53 @@ export default function Home() {
   const [selectedChain, setSelectedChain] = useState("");
   const categoriesResult = categoriesData?.data?.data;
   const subcategoriesResult = subcategoriesData?.data?.data;
-  const originalBotsResult = originalBotsData?.data?.data;
+  const gameBotsResult = gameBotsData?.data?.data;
+  const gameBotsMeta = gameBotsData?.data?.meta;
+  const toolsBotsResult = toolsBotsData?.data?.data;
+  const toolsBotsMeta = toolsBotsData?.data?.meta;
+  const socialBotsResult = socialBotsData?.data?.data;
+  const socialBotsMeta = socialBotsData?.data?.meta;
+  const web3ToolsBotsResult = web3ToolsBotsData?.data?.data;
+  const web3ToolsBotsMeta = web3ToolsBotsData?.data?.meta;
 
-  const botsFiltered = originalBotsResult?.filter(filterPublished);
-  const botsPerCategory = getUniqueBy(botsFiltered);
+  const theCategoriesData = [
+    {
+      id: 1,
+      category: "game",
+      botsResult: gameBotsResult,
+      botsMeta: gameBotsMeta,
+      setPageFunction: setCurrentGamePage,
+      currentPage: currentGamePage,
+      isLoading: gameBotsLoading,
+    },
+    {
+      id: 2,
+      category: "tools",
+      botsResult: toolsBotsResult,
+      botsMeta: toolsBotsMeta,
+      setPageFunction: setCurrentToolsPage,
+      currentPage: currentToolsPage,
+      isLoading: toolsBotsLoading,
+    },
+    {
+      id: 3,
+      category: "social",
+      botsResult: socialBotsResult,
+      botsMeta: socialBotsMeta,
+      setPageFunction: setCurrentSocialPage,
+      currentPage: currentSocialPage,
+      isLoading: socialBotsLoading,
+    },
+    {
+      id: 4,
+      category: "WEB3 tools",
+      botsResult: web3ToolsBotsResult,
+      botsMeta: web3ToolsBotsMeta,
+      setPageFunction: setCurrentWeb3ToolsPage,
+      currentPage: currentWeb3ToolsPage,
+      isLoading: web3ToolsBotsLoading,
+    },
+  ];
 
   const [searchQuery, setSearchQuery] = useState("");
   const ratingOptions = [
@@ -143,24 +206,6 @@ export default function Home() {
     childLength: data?.attributes?.bots?.data?.length,
   }));
 
-  const theCategories = [
-    {
-      id: 1,
-      title: "Top Trending",
-      botsData: botsFiltered,
-    },
-    {
-      id: 2,
-      title: "Top bot per category",
-      botsData: botsPerCategory,
-    },
-    {
-      id: 3,
-      title: "Recently Added",
-      botsData: botsFiltered,
-    },
-  ];
-
   return (
     <MainLayout>
       <div
@@ -226,6 +271,26 @@ export default function Home() {
           <SecondCategoryComponent
             key={data?.id}
             attributes={data?.attributes}
+            botData={
+              theCategoriesData?.find(
+                (theData) => theData?.category === data?.attributes?.title
+              ).botsResult
+            }
+            paginationData={
+              theCategoriesData?.find(
+                (theData) => theData?.category === data?.attributes?.title
+              ).botsMeta?.pagination
+            }
+            setPageFunction={
+              theCategoriesData?.find(
+                (theData) => theData?.category === data?.attributes?.title
+              ).setPageFunction
+            }
+            isLoading={
+              theCategoriesData?.find(
+                (theData) => theData?.category === data?.attributes?.title
+              ).isLoading
+            }
           />
         ))}
       {searchQuery && (

@@ -87,7 +87,9 @@ export default function Bot() {
   const botResult = botData?.data?.data;
   const imageUrl = botResult?.attributes?.imageUrl ?? "/img/example.png";
   const { data: ratingData } = useSWR(
-    `/api/ratings?filters[user_account][$eq]=${userResult?.id}&filters[bot][$eq]=${botResult?.id}`,
+    `/api/ratings?filters[user_account][$eq]=${
+      userResult?.id ?? "1"
+    }&filters[bot][$eq]=${botResult?.id ?? "1"}`,
     fetcherStrapi
   );
 

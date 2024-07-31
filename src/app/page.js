@@ -39,22 +39,22 @@ export default function Home() {
   const [currentWeb3ToolsPage, setCurrentWeb3ToolsPage] = useState(1);
 
   const { data: gameBotsData, isLoading: gameBotsLoading } = useSWR(
-    `/api/bots?filters[theCategory][$eqi]=game&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentGamePage}&pagination[pageSize]=6`,
+    `/api/bots?filters[theCategory][$eqi]=game&filters[published][$eq]=true&sort[0]=id:asc&populate=deep,10?_sort=id:ASC&pagination[page]=${currentGamePage}&pagination[pageSize]=6`,
     fetcherStrapi
   );
 
   const { data: toolsBotsData, isLoading: toolsBotsLoading } = useSWR(
-    `/api/bots?filters[theCategory][$eqi]=tools&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentToolsPage}&pagination[pageSize]=6`,
+    `/api/bots?filters[theCategory][$eqi]=tools&filters[published][$eq]=true&sort[0]=id:asc&populate=deep,10?_sort=id:ASC&pagination[page]=${currentToolsPage}&pagination[pageSize]=6`,
     fetcherStrapi
   );
 
   const { data: socialBotsData, isLoading: socialBotsLoading } = useSWR(
-    `/api/bots?filters[theCategory][$eqi]=social&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentSocialPage}&pagination[pageSize]=6`,
+    `/api/bots?filters[theCategory][$eqi]=social&filters[published][$eq]=true&sort[0]=id:asc&populate=deep,10?_sort=id:ASC&pagination[page]=${currentSocialPage}&pagination[pageSize]=6`,
     fetcherStrapi
   );
 
   const { data: web3ToolsBotsData, isLoading: web3ToolsBotsLoading } = useSWR(
-    `/api/bots?filters[theCategory][$eqi]=Web3 tools&filters[published][$eq]=true&populate=deep,10?_sort=id:ASC&pagination[page]=${currentWeb3ToolsPage}&pagination[pageSize]=6`,
+    `/api/bots?filters[theCategory][$eqi]=Web3 tools&filters[published][$eq]=true&sort[0]=id:asc&populate=deep,10?_sort=id:ASC&pagination[page]=${currentWeb3ToolsPage}&pagination[pageSize]=6`,
     fetcherStrapi
   );
 

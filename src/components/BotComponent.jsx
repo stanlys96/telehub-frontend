@@ -21,7 +21,7 @@ export const BotComponent = ({ attributes }) => {
             className="h-fit"
           />
         </div>
-        <div className="rounded-b-[16px] md:rounded-[16px] px-[26px] py-[24px] flex gap-x-2 md:flex-row flex-col justify-between">
+        <div className="rounded-b-[16px] md:rounded-[16px] px-[26px] py-[24px] flex gap-x-3 md:flex-row flex-col justify-between">
           <Image
             width={100}
             height={100}
@@ -29,14 +29,11 @@ export const BotComponent = ({ attributes }) => {
             className="hidden md:block h-fit"
             src={transformGoogleDriveUrl(imageUrl)}
           />
-          <div className="flex flex-col gap-y-3 justify-center">
+          <div className="flex flex-col gap-y-3 flex-1">
             <p className="font-semibold">
               {capitalizeWords(attributes?.title)}
             </p>
-            <p>
-              {attributes?.chain?.data?.attributes?.name ?? "TON"} Chain,{" "}
-              {attributes?.members ?? "0"} members
-            </p>
+            <p>{attributes?.chain?.data?.attributes?.name ?? "TON"} Chain</p>
             <a
               onClick={(e) => {
                 e.stopPropagation();
@@ -45,7 +42,7 @@ export const BotComponent = ({ attributes }) => {
                   "_blank"
                 );
               }}
-              className="z-100 px-[19px] hover:bg-[#28B9E8] hover:text-white transition duration-300 text-[#28B9E8] py-[8px] justify-center items-center rounded-[39px] border-[#28B9E8] border-[1px] flex gap-x-2 cursor-pointer"
+              className="z-100 w-full px-[19px] hover:bg-[#28B9E8] hover:text-white transition duration-300 text-[#28B9E8] py-[8px] justify-center items-center rounded-[39px] border-[#28B9E8] border-[1px] flex gap-x-2 cursor-pointer"
             >
               <span className="font-bold text-[16px]">{">"} Go to bot</span>
             </a>

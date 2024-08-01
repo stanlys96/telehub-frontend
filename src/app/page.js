@@ -294,8 +294,8 @@ export default function Home() {
           />
         ))}
       {searchQuery && (
-        <div className="flex md:flex-row flex-col gap-x-10 px-[10px] md:px-[25px] py-[25px]">
-          <div className="bg-white rounded-[12px] px-[24px] py-[18px]">
+        <div className="flex md:flex-row flex-col gap-x-10 px-[10px] md:px-[25px] h-fit py-[25px]">
+          <div className="bg-white rounded-[12px] px-[24px] py-[18px] h-fit">
             <p className="text-[20px] font-bold">Filters</p>
             <hr className="my-5" />
             <div className="flex justify-between mb-3 gap-x-[200px]">

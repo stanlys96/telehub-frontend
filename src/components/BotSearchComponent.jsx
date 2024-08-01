@@ -23,10 +23,7 @@ export const BotSearchComponent = ({ attributes }) => {
       <div className="p-[16px]">
         <div className="flex flex-col gap-y-3 justify-center">
           <p className="font-semibold">{capitalizeWords(attributes?.title)}</p>
-          <p>
-            {attributes?.chain?.data?.attributes?.name} Chain,{" "}
-            {attributes?.members} members
-          </p>
+          <p>{attributes?.chain?.data?.attributes?.name ?? "TON"} Chain</p>
           <a
             onClick={(e) => {
               e.stopPropagation();

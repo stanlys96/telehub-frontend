@@ -181,7 +181,6 @@ export default function Bot() {
                   <p className="text-[24px] md:text-[40px] font-semibold">
                     {capitalizeWords(botResult?.attributes?.title)}
                   </p>
-
                   <div
                     className={`p-[8px] md:p-[16px] rounded-[8px] ${
                       botResult?.attributes?.subcategory?.data?.attributes
@@ -202,7 +201,7 @@ export default function Bot() {
                   <p className="text-[16px] md:text-[24px]">
                     {botResult?.attributes?.chain?.data?.attributes?.name ??
                       "TON"}{" "}
-                    Chain, {botResult?.attributes?.members ?? "0"} Members
+                    Chain
                   </p>
                 </div>
                 <a

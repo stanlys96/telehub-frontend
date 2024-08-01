@@ -2,6 +2,7 @@ import { BotComponent } from "@/components/BotComponent";
 import Image from "next/image";
 import { Pagination } from "antd";
 import { Spin } from "antd";
+import { capitalizeWords } from "@/utils/helper";
 
 export const SecondCategoryComponent = ({
   attributes,
@@ -15,7 +16,9 @@ export const SecondCategoryComponent = ({
       <div className="flex justify-between items-center">
         <div className="flex gap-x-2 items-center">
           <div className="h-[50px] w-[9px] bg-[#28B9E8]" />
-          <p className="text-[18px] md:text-[40px]">{attributes?.title}</p>
+          <p className="text-[18px] md:text-[40px]">
+            {capitalizeWords(attributes?.title)}
+          </p>
         </div>
         <a className="rounded-[30px] cursor-pointer h-fit px-[19px] py-[12px] bg-[#28B9E8] flex items-center gap-x-1">
           <span className="text-white text-[12px] md:text-[16px]">

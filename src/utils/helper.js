@@ -8,8 +8,25 @@ export function transformGoogleDriveUrl(url) {
       return `https://drive.google.com/uc?export=view&id=${fileId}`;
     }
 
-    return url;
+    return "/img/example.png";
   } catch (e) {
-    return url;
+    return "/img/example.png";
+  }
+}
+
+export function capitalizeWords(sentence) {
+  try {
+    return sentence
+      ?.split(" ")
+      ?.map((word) => {
+        if (word.charAt(0) === word.charAt(0).toUpperCase()) {
+          return word;
+        } else {
+          return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+        }
+      })
+      .join(" ");
+  } catch (e) {
+    return sentence;
   }
 }

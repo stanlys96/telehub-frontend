@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { transformGoogleDriveUrl } from "@/utils/helper";
+import { capitalizeWords, transformGoogleDriveUrl } from "@/utils/helper";
 
 export const BotSearchComponent = ({ attributes }) => {
   const router = useRouter();
@@ -22,7 +22,7 @@ export const BotSearchComponent = ({ attributes }) => {
       </div>
       <div className="p-[16px]">
         <div className="flex flex-col gap-y-3 justify-center">
-          <p className="font-semibold">{attributes?.title}</p>
+          <p className="font-semibold">{capitalizeWords(attributes?.title)}</p>
           <p>
             {attributes?.chain?.data?.attributes?.name} Chain,{" "}
             {attributes?.members} members
@@ -50,7 +50,7 @@ export const BotSearchComponent = ({ attributes }) => {
               "text-[#11787F]"
             } font-semibold`}
           >
-            {attributes?.subcategory?.data?.attributes?.title}
+            {capitalizeWords(attributes?.theCategory)}
           </div>
           <div className="flex gap-y-2 gap-x-2 items-center">
             <div>

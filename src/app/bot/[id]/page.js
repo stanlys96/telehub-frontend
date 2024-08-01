@@ -11,7 +11,7 @@ import { signOut, useSession } from "next-auth/react";
 import Swal from "sweetalert2";
 import { FaGoogle } from "react-icons/fa";
 import { doLogoutBot, doSocialLogin, doSocialLoginBot } from "@/app/actions";
-import { transformGoogleDriveUrl } from "@/utils/helper";
+import { capitalizeWords, transformGoogleDriveUrl } from "@/utils/helper";
 
 const Toast = Swal.mixin({
   toast: true,
@@ -179,7 +179,7 @@ export default function Bot() {
               <div className="w-full">
                 <div className="flex justify-between items-center w-full">
                   <p className="text-[24px] md:text-[40px] font-semibold">
-                    {botResult?.attributes?.title}
+                    {capitalizeWords(botResult?.attributes?.title)}
                   </p>
 
                   <div
@@ -194,10 +194,7 @@ export default function Bot() {
                           ?.textColor ?? "text-[#11787F]"
                       }`}
                     >
-                      {
-                        botResult?.attributes?.subcategory?.data?.attributes
-                          ?.title
-                      }
+                      {capitalizeWords(botResult?.attributes?.theCategory)}
                     </span>
                   </div>
                 </div>

@@ -56,6 +56,7 @@ export const SecondCategoryComponent = ({
           total={paginationData?.total ?? "1"}
           pageSize={paginationData?.pageSize ?? "1"}
           onChange={(e) => setPageFunction(e)}
+          pageSizeOptions={[6]}
         />
       </div>
     </div>

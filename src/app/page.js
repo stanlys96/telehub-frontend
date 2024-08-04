@@ -9,6 +9,7 @@ import { Checkbox, Col, Input } from "antd";
 import { BotSearchComponent } from "@/components/BotSearchComponent";
 import { Spin } from "antd";
 import { SecondCategoryComponent } from "@/components/SecondCategoryComponent";
+import { capitalizeWords } from "@/utils/helper";
 // import { useRouter } from "next/router";
 
 const filterPublished = (data) => {
@@ -158,9 +159,7 @@ export default function Home() {
 
   const filterByCategory = (attr) => {
     if (selectedCategories?.length === 0) return true;
-    return selectedCategories?.includes(
-      attr?.attributes?.subcategory?.data?.attributes?.title?.toLowerCase()
-    );
+    return selectedCategories?.includes(attr?.attributes?.theCategory);
   };
 
   const filterByRating = (attr) => {
@@ -171,8 +170,8 @@ export default function Home() {
       );
       if (
         currentRatingOption &&
-        attr?.attributes?.rating >= currentRatingOption?.minValue &&
-        attr?.attributes?.rating <= currentRatingOption?.maxValue
+        (attr?.attributes?.rating ?? 0) >= currentRatingOption?.minValue &&
+        (attr?.attributes?.rating ?? 0) <= currentRatingOption?.maxValue
       ) {
         return true;
       }
@@ -312,22 +311,22 @@ export default function Home() {
               onChange={onChangeCategory}
             >
               <Col className="flex flex-col gap-y-2 justify-center" span={24}>
-                {subcategoriesOptions?.map((data) => (
+                {theCategoriesData?.map((data) => (
                   <div
-                    key={data.value}
+                    key={data?.category}
                     className="flex justify-between items-center"
                   >
                     <Checkbox
                       className="text-[14px] text-[#676767]"
-                      value={data?.value}
+                      value={data?.category}
                     >
-                      {data?.label}
+                      {capitalizeWords(data?.category)}
                     </Checkbox>
                     <p>
                       {botsResult?.filter(
                         (botData) =>
-                          botData?.attributes?.subcategory?.data?.attributes?.title?.toLowerCase() ===
-                          data?.value?.toLowerCase()
+                          botData?.attributes?.theCategory?.toLowerCase() ===
+                          data?.category?.toLowerCase()
                       ).length ?? "0"}
                     </p>
                   </div>
@@ -360,8 +359,8 @@ export default function Home() {
                     <p>
                       {botsResult?.filter(
                         (item) =>
-                          item?.attributes?.rating >= data?.minValue &&
-                          item?.attributes?.rating <= data?.maxValue
+                          (item?.attributes?.rating ?? 0) >= data?.minValue &&
+                          (item?.attributes?.rating ?? 0) <= data?.maxValue
                       ).length ?? "0"}
                     </p>
                   </div>

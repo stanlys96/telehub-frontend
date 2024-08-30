@@ -16,8 +16,8 @@ export default function RootLayout({ children, pageProps }) {
       <body className={inter.className}>
         <SessionProvider session={pageProps?.session}>
           {children}
+          <Analytics />
         </SessionProvider>
-        <Analytics />
       </body>
     </html>
   );

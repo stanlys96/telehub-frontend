@@ -33,7 +33,7 @@ def csv_to_sql(csv_file_path, table_name, output_file_path):
         file.write(sql_query)
 
 # Example usage
-csv_file_path = 'image-lengkap.csv'  # Replace with your CSV file path
+csv_file_path = 'icaklast.csv'  # Replace with your CSV file path
 output_file_path = 'asd.txt'  # Replace with your desired output file path
 table_name = 'bots'
 csv_to_sql(csv_file_path, table_name, output_file_path)

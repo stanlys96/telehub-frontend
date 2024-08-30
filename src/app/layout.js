@@ -12,6 +12,10 @@ export default function RootLayout({ children, pageProps }) {
       <head>
         <title>Telehub</title>
         <link rel="shortcut icon" href="/img/favicon.ico" />
+        <meta
+          name="google-site-verification"
+          content="l54Rhrs94zT4soukk5vm85oahZR_5RPoV86xTDsKAP0"
+        />
       </head>
       <body className={inter.className}>
         <SessionProvider session={pageProps?.session}>
